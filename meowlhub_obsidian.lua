@@ -1858,364 +1858,393 @@ ProgressBarFill.Size = UDim2.new(0,0,1,0); ProgressBarFill.BackgroundColor3 = Co
 Instance.new("UICorner", ProgressBarFill).CornerRadius = UDim.new(1,0)
 
 -- ============================================================
--- GUI BUILDING — OBSIDIAN LIBRARY
+-- GUI BUILDING — OBSIDIAN LIBRARY (correct tabbox pattern)
 -- ============================================================
 
 -- ─── TAB 1: ⚔ Combat ─────────────────────────────────────────
-local CombatBox = Tabs.CombatTab:AddLeftGroupbox("Melee")
+local CombatLeftBox = Tabs.CombatTab:AddLeftTabbox()
+local MeleeTab = CombatLeftBox:AddTab("Melee")
 
-CombatBox:AddToggle("SpamBat", {Text = "Spam Bat", Default = Enabled.SpamBat}):OnChanged(function(v)
+MeleeTab:AddToggle("SpamBat", {Text = "Spam Bat", Default = Enabled.SpamBat})
+Toggles.SpamBat:OnChanged(function(v)
     Enabled.SpamBat = v
     if v then startSpamBat() else stopSpamBat() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Spam Bat'")
 end)
 
-CombatBox:AddToggle("BatAimbot", {Text = "Bat Aimbot", Default = Enabled.BatAimbot}):AddKeyPicker("BatAimbotKey", {Default = "X", SyncToggleState = false, Mode = "Toggle", Text = "Bat Aimbot"}):OnChanged(function(v)
+MeleeTab:AddToggle("BatAimbot", {Text = "Bat Aimbot", Default = Enabled.BatAimbot}):AddKeyPicker("BatAimbotKey", {Default = "X", SyncToggleState = false, Mode = "Toggle", Text = "Bat Aimbot"})
+Toggles.BatAimbot:OnChanged(function(v)
     Enabled.BatAimbot = v
     if v then startBatAimbot() else stopBatAimbot() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Bat Aimbot'")
 end)
 
-local CombatBox2 = Tabs.CombatTab:AddLeftGroupbox("Utility")
+local UtilityTab = CombatLeftBox:AddTab("Utility")
 
-CombatBox2:AddToggle("AntiRagdoll", {Text = "Anti Ragdoll", Default = Enabled.AntiRagdoll}):OnChanged(function(v)
+UtilityTab:AddToggle("AntiRagdoll", {Text = "Anti Ragdoll", Default = Enabled.AntiRagdoll})
+Toggles.AntiRagdoll:OnChanged(function(v)
     Enabled.AntiRagdoll = v
     if v then startAntiRagdoll() else stopAntiRagdoll() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Anti Ragdoll'")
 end)
 
-CombatBox2:AddToggle("MedusaInRange", {Text = "Medusa In Range", Default = Enabled.MedusaInRange}):OnChanged(function(v)
+UtilityTab:AddToggle("MedusaInRange", {Text = "Medusa In Range", Default = Enabled.MedusaInRange})
+Toggles.MedusaInRange:OnChanged(function(v)
     Enabled.MedusaInRange = v
     if v then startMedusaInRange() else stopMedusaInRange() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Medusa In Range'")
 end)
 
-CombatBox2:AddSlider("MedusaRange", {Text = "Medusa Range", Default = Values.MedusaRange, Min = 5, Max = 30, Rounding = 0, Compact = false}):OnChanged(function(v)
+UtilityTab:AddSlider("MedusaRange", {Text = "Medusa Range", Default = Values.MedusaRange, Min = 5, Max = 30, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.MedusaRange = v
     Library:Notify("Medusa Range Set To " .. v)
 end)
 
-local CombatBox3 = Tabs.CombatTab:AddRightGroupbox("Instant Nuke")
+local CombatRightBox = Tabs.CombatTab:AddRightTabbox()
+local NukeTab = CombatRightBox:AddTab("Instant Nuke")
 
-CombatBox3:AddButton({Text = "🔥 Nuke Nearest [Q]", Func = function()
-    local n = getNearestPlayer()
-    if n then INSTANT_NUKE(n) end
-    Library:Notify("Nuked Nearest Player!")
+NukeTab:AddButton({Text = "Nuke Nearest [Q]", Func = function()
+    local n = getNearestPlayer(); if n then INSTANT_NUKE(n) end
 end, Tooltip = "Instantly nukes the nearest player"})
 
--- ─── TAB 2: 🏃 Movement ──────────────────────────────────────
-local MoveBox1 = Tabs.MovementTab:AddLeftGroupbox("Speed")
+NukeTab:AddLabel("Keybinds: V=Speed | N=Spin")
+NukeTab:AddLabel("M=Galaxy | X=Aimbot | Q=Nuke")
+NukeTab:AddLabel("Z=AutoLeft | C=AutoRight | F=Spam")
 
-MoveBox1:AddToggle("SpeedBoost", {Text = "Speed Boost", Default = Enabled.SpeedBoost}):AddKeyPicker("SpeedKey", {Default = "V", SyncToggleState = false, Mode = "Toggle", Text = "Speed Boost"}):OnChanged(function(v)
+-- ─── TAB 2: 🏃 Movement ──────────────────────────────────────
+local MoveLeftBox = Tabs.MovementTab:AddLeftTabbox()
+local SpeedTab = MoveLeftBox:AddTab("Speed")
+
+SpeedTab:AddToggle("SpeedBoost", {Text = "Speed Boost", Default = Enabled.SpeedBoost}):AddKeyPicker("SpeedKey", {Default = "V", SyncToggleState = false, Mode = "Toggle", Text = "Speed Boost"})
+Toggles.SpeedBoost:OnChanged(function(v)
     Enabled.SpeedBoost = v
     if v then startSpeedBoost() else stopSpeedBoost() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Speed Boost'")
 end)
 
-MoveBox1:AddSlider("BoostSpeed", {Text = "Boost Speed", Default = Values.BoostSpeed, Min = 1, Max = 70, Rounding = 0, Compact = false}):OnChanged(function(v)
+SpeedTab:AddSlider("BoostSpeed", {Text = "Boost Speed", Default = Values.BoostSpeed, Min = 1, Max = 70, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.BoostSpeed = v
     Library:Notify("Boost Speed Set To " .. v)
 end)
 
-local MoveBox2 = Tabs.MovementTab:AddLeftGroupbox("Spin / Galaxy")
+local SpinTab = MoveLeftBox:AddTab("Spin / Galaxy")
 
-MoveBox2:AddToggle("SpinBot", {Text = "Spin Bot", Default = Enabled.SpinBot}):AddKeyPicker("SpinKey", {Default = "N", SyncToggleState = false, Mode = "Toggle", Text = "Spin Bot"}):OnChanged(function(v)
+SpinTab:AddToggle("SpinBot", {Text = "Spin Bot", Default = Enabled.SpinBot}):AddKeyPicker("SpinKey", {Default = "N", SyncToggleState = false, Mode = "Toggle", Text = "Spin Bot"})
+Toggles.SpinBot:OnChanged(function(v)
     Enabled.SpinBot = v
     if v then startSpinBot() else stopSpinBot() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Spin Bot'")
 end)
 
-MoveBox2:AddSlider("SpinSpeed", {Text = "Spin Speed", Default = Values.SpinSpeed, Min = 5, Max = 50, Rounding = 0, Compact = false}):OnChanged(function(v)
+SpinTab:AddSlider("SpinSpeed", {Text = "Spin Speed", Default = Values.SpinSpeed, Min = 5, Max = 50, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.SpinSpeed = v
     Library:Notify("Spin Speed Set To " .. v)
 end)
 
-MoveBox2:AddToggle("Galaxy", {Text = "Galaxy Mode", Default = Enabled.Galaxy}):AddKeyPicker("GalaxyKey", {Default = "M", SyncToggleState = false, Mode = "Toggle", Text = "Galaxy Mode"}):OnChanged(function(v)
+SpinTab:AddToggle("Galaxy", {Text = "Galaxy Mode", Default = Enabled.Galaxy}):AddKeyPicker("GalaxyKey", {Default = "M", SyncToggleState = false, Mode = "Toggle", Text = "Galaxy Mode"})
+Toggles.Galaxy:OnChanged(function(v)
     Enabled.Galaxy = v
     if v then startGalaxy() else stopGalaxy() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Galaxy Mode'")
 end)
 
-MoveBox2:AddSlider("GalaxyGravityPercent", {Text = "Gravity %", Default = Values.GalaxyGravityPercent, Min = 25, Max = 130, Rounding = 0, Compact = false}):OnChanged(function(v)
+SpinTab:AddSlider("GalaxyGravityPercent", {Text = "Gravity %", Default = Values.GalaxyGravityPercent, Min = 25, Max = 130, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.GalaxyGravityPercent = v
-    if galaxyEnabled then adjustGalaxyJump() end
     Library:Notify("Gravity % Set To " .. v)
 end)
 
-MoveBox2:AddSlider("HOP_POWER", {Text = "Hop Power", Default = Values.HOP_POWER, Min = 10, Max = 80, Rounding = 0, Compact = false}):OnChanged(function(v)
+SpinTab:AddSlider("HOP_POWER", {Text = "Hop Power", Default = Values.HOP_POWER, Min = 10, Max = 80, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.HOP_POWER = v
     Library:Notify("Hop Power Set To " .. v)
 end)
 
-local MoveBox3 = Tabs.MovementTab:AddRightGroupbox("Auto Walk")
+local MoveRightBox = Tabs.MovementTab:AddRightTabbox()
+local AutoWalkTab = MoveRightBox:AddTab("Auto Walk")
 
-MoveBox3:AddToggle("AutoWalkEnabled", {Text = "Auto Left", Default = Enabled.AutoWalkEnabled}):AddKeyPicker("AutoLeftKey", {Default = "Z", SyncToggleState = false, Mode = "Toggle", Text = "Auto Left"}):OnChanged(function(v)
-    AutoWalkEnabled = v; Enabled.AutoWalkEnabled = v
+AutoWalkTab:AddToggle("AutoWalkEnabled", {Text = "Auto Left", Default = Enabled.AutoWalkEnabled}):AddKeyPicker("AutoLeftKey", {Default = "Z", SyncToggleState = false, Mode = "Toggle", Text = "Auto Left"})
+Toggles.AutoWalkEnabled:OnChanged(function(v)
+    Enabled.AutoWalkEnabled = v; AutoWalkEnabled = v
     if v then startAutoWalk() else stopAutoWalk() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Auto Left'")
 end)
 
-MoveBox3:AddToggle("AutoRightEnabled", {Text = "Auto Right", Default = Enabled.AutoRightEnabled}):AddKeyPicker("AutoRightKey", {Default = "C", SyncToggleState = false, Mode = "Toggle", Text = "Auto Right"}):OnChanged(function(v)
-    AutoRightEnabled = v; Enabled.AutoRightEnabled = v
+AutoWalkTab:AddToggle("AutoRightEnabled", {Text = "Auto Right", Default = Enabled.AutoRightEnabled}):AddKeyPicker("AutoRightKey", {Default = "C", SyncToggleState = false, Mode = "Toggle", Text = "Auto Right"})
+Toggles.AutoRightEnabled:OnChanged(function(v)
+    Enabled.AutoRightEnabled = v; AutoRightEnabled = v
     if v then startAutoRight() else stopAutoRight() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Auto Right'")
 end)
 
-local MoveBox4 = Tabs.MovementTab:AddRightGroupbox("Misc")
+local MiscTab = MoveRightBox:AddTab("Misc")
 
-MoveBox4:AddToggle("Unwalk", {Text = "Unwalk (No Anim)", Default = Enabled.Unwalk}):OnChanged(function(v)
+MiscTab:AddToggle("Unwalk", {Text = "Unwalk (No Anim)", Default = Enabled.Unwalk})
+Toggles.Unwalk:OnChanged(function(v)
     Enabled.Unwalk = v
     if v then startUnwalk() else stopUnwalk() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Unwalk'")
 end)
 
-MoveBox4:AddToggle("PlayerFollower", {Text = "Player Follower", Default = Enabled.PlayerFollower}):OnChanged(function(v)
+MiscTab:AddToggle("PlayerFollower", {Text = "Player Follower", Default = Enabled.PlayerFollower})
+Toggles.PlayerFollower:OnChanged(function(v)
     Enabled.PlayerFollower = v
     if v then startPlayerFollower() else stopPlayerFollower() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Player Follower'")
 end)
 
-MoveBox4:AddSlider("PlayerFollowerSpeed", {Text = "Follow Speed", Default = Values.PlayerFollowerSpeed, Min = 20, Max = 80, Rounding = 0, Compact = false}):OnChanged(function(v)
+MiscTab:AddSlider("PlayerFollowerSpeed", {Text = "Follow Speed", Default = Values.PlayerFollowerSpeed, Min = 20, Max = 80, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.PlayerFollowerSpeed = v
     Library:Notify("Follow Speed Set To " .. v)
 end)
 
-MoveBox4:AddSlider("PlayerFollowerDistance", {Text = "Follow Distance", Default = Values.PlayerFollowerDistance, Min = 1, Max = 15, Rounding = 0, Compact = false}):OnChanged(function(v)
+MiscTab:AddSlider("PlayerFollowerDistance", {Text = "Follow Distance", Default = Values.PlayerFollowerDistance, Min = 1, Max = 15, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.PlayerFollowerDistance = v
     Library:Notify("Follow Distance Set To " .. v)
 end)
 
 -- ─── TAB 3: 🎯 Stealing ──────────────────────────────────────
-local StealBox1 = Tabs.StealingTab:AddLeftGroupbox("Auto Steal")
+local StealLeftBox = Tabs.StealingTab:AddLeftTabbox()
+local AutoStealTab = StealLeftBox:AddTab("Auto Steal")
 
-StealBox1:AddToggle("AutoSteal", {Text = "Auto Steal", Default = Enabled.AutoSteal}):OnChanged(function(v)
+AutoStealTab:AddToggle("AutoSteal", {Text = "Auto Steal", Default = Enabled.AutoSteal})
+Toggles.AutoSteal:OnChanged(function(v)
     Enabled.AutoSteal = v
     if v then startAutoSteal() else stopAutoSteal() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Auto Steal'")
 end)
 
-StealBox1:AddSlider("STEAL_DURATION_UI", {Text = "Steal Duration (×10)", Default = math.floor(Values.STEAL_DURATION * 10), Min = 1, Max = 30, Rounding = 0, Compact = false}):OnChanged(function(v)
+AutoStealTab:AddSlider("STEAL_DURATION_UI", {Text = "Steal Duration (x10)", Default = math.floor(Values.STEAL_DURATION * 10), Min = 1, Max = 30, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.STEAL_DURATION = v / 10
-    Library:Notify("Steal Duration Set To " .. v/10 .. "s")
+    Library:Notify("Steal Duration Set To " .. (v/10) .. "s")
 end)
 
-StealBox1:AddToggle("SpeedWhileStealing", {Text = "Speed While Stealing", Default = Enabled.SpeedWhileStealing}):OnChanged(function(v)
+AutoStealTab:AddToggle("SpeedWhileStealing", {Text = "Speed While Stealing", Default = Enabled.SpeedWhileStealing})
+Toggles.SpeedWhileStealing:OnChanged(function(v)
     Enabled.SpeedWhileStealing = v
     if v then startSpeedWhileStealing() else stopSpeedWhileStealing() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Speed While Stealing'")
 end)
 
-StealBox1:AddSlider("StealingSpeedValue", {Text = "Steal Speed", Default = Values.StealingSpeedValue, Min = 10, Max = 35, Rounding = 0, Compact = false}):OnChanged(function(v)
+AutoStealTab:AddSlider("StealingSpeedValue", {Text = "Steal Speed", Default = Values.StealingSpeedValue, Min = 10, Max = 35, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.StealingSpeedValue = v
     Library:Notify("Steal Speed Set To " .. v)
 end)
 
-local StealBox2 = Tabs.StealingTab:AddRightGroupbox("Instant Grab")
+local InstantGrabTab = StealLeftBox:AddTab("Instant Grab")
 
-StealBox2:AddToggle("AutoStealBooster", {Text = "Instant Grab", Default = Enabled.AutoStealBooster}):OnChanged(function(v)
-    Enabled.AutoStealBooster = v; Enabled.HighestBrainrot = false
+InstantGrabTab:AddToggle("AutoStealBooster", {Text = "Instant Grab", Default = Enabled.AutoStealBooster})
+Toggles.AutoStealBooster:OnChanged(function(v)
+    Enabled.AutoStealBooster = v
     if v then startBoosterAutoSteal() else stopBoosterAutoSteal() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Instant Grab'")
 end)
 
-StealBox2:AddToggle("HighestBrainrot", {Text = "Insta Grab Highest 🎯", Default = Enabled.HighestBrainrot}):OnChanged(function(v)
-    Enabled.HighestBrainrot = v; Enabled.AutoStealBooster = v
-    if v then startBoosterAutoSteal() else stopBoosterAutoSteal() end
-    Library:Notify((v and "Enabled" or "Disabled") .. " 'Highest Brainrot Mode'")
+InstantGrabTab:AddToggle("HighestBrainrot", {Text = "Insta Grab Highest", Default = Enabled.HighestBrainrot})
+Toggles.HighestBrainrot:OnChanged(function(v)
+    Enabled.HighestBrainrot = v
+    Library:Notify((v and "Enabled" or "Disabled") .. " 'Insta Grab Highest'")
 end)
 
-StealBox2:AddToggle("SpeedWhileStealingBooster", {Text = "Boost Speed While Stealing", Default = Enabled.SpeedWhileStealingBooster}):OnChanged(function(v)
+InstantGrabTab:AddToggle("SpeedWhileStealingBooster", {Text = "Boost Speed While Stealing", Default = Enabled.SpeedWhileStealingBooster})
+Toggles.SpeedWhileStealingBooster:OnChanged(function(v)
     Enabled.SpeedWhileStealingBooster = v
     if v then startBoosterSpeedWhileStealing() else stopBoosterSpeedWhileStealing() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Boost Speed While Stealing'")
 end)
 
-StealBox2:AddSlider("BoosterStealSpeed", {Text = "Booster Steal Speed", Default = Values.BoosterStealSpeed, Min = 20, Max = 35, Rounding = 0, Compact = false}):OnChanged(function(v)
+InstantGrabTab:AddSlider("BoosterStealSpeed", {Text = "Booster Steal Speed", Default = Values.BoosterStealSpeed, Min = 20, Max = 35, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.BoosterStealSpeed = v
     Library:Notify("Booster Steal Speed Set To " .. v)
 end)
 
-local StealBox3 = Tabs.StealingTab:AddRightGroupbox("Carpet Teleport")
+local StealRightBox = Tabs.StealingTab:AddRightTabbox()
+local CarpetTPTab = StealRightBox:AddTab("Carpet Teleport")
 
-StealBox3:AddButton({Text = "🏠 Base 1", Func = function()
-    carpetTeleportToBase(1)
-    Library:Notify("Teleported to Base 1")
+CarpetTPTab:AddButton({Text = "Base 1", Func = function()
+    local c = Player.Character; if c and c:FindFirstChild("HumanoidRootPart") then c.HumanoidRootPart.CFrame = CFrame.new(BASE1_POS) end
 end, Tooltip = "Teleport to Base 1"})
 
-StealBox3:AddButton({Text = "🏠 Base 2", Func = function()
-    carpetTeleportToBase(2)
-    Library:Notify("Teleported to Base 2")
+CarpetTPTab:AddButton({Text = "Base 2", Func = function()
+    local c = Player.Character; if c and c:FindFirstChild("HumanoidRootPart") then c.HumanoidRootPart.CFrame = CFrame.new(BASE2_POS) end
 end, Tooltip = "Teleport to Base 2"})
 
--- ─── TAB 4: ✨ Visuals ────────────────────────────────────────
-local VisBox1 = Tabs.VisualsTab:AddLeftGroupbox("Performance")
+-- ─── TAB 4: 👁 Visuals ───────────────────────────────────────
+local VisLeftBox = Tabs.VisualsTab:AddLeftTabbox()
+local PerformTab = VisLeftBox:AddTab("Performance")
 
-VisBox1:AddToggle("Optimizer", {Text = "Optimizer + XRay", Default = Enabled.Optimizer}):OnChanged(function(v)
+PerformTab:AddToggle("Optimizer", {Text = "Optimizer + XRay", Default = Enabled.Optimizer})
+Toggles.Optimizer:OnChanged(function(v)
     Enabled.Optimizer = v
     if v then enableOptimizer() else disableOptimizer() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Optimizer'")
 end)
 
-local VisBox2 = Tabs.VisualsTab:AddLeftGroupbox("Skybox / Lighting")
+local SkyboxTab = VisLeftBox:AddTab("Skybox")
 
-VisBox2:AddToggle("GalaxySkyBright", {Text = "Galaxy Sky Bright", Default = Enabled.GalaxySkyBright}):OnChanged(function(v)
+SkyboxTab:AddToggle("GalaxySkyBright", {Text = "Galaxy Sky Bright", Default = Enabled.GalaxySkyBright})
+Toggles.GalaxySkyBright:OnChanged(function(v)
     Enabled.GalaxySkyBright = v
     if v then enableGalaxySkyBright() else disableGalaxySkyBright() end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Galaxy Sky Bright'")
 end)
 
-local VisBox3 = Tabs.VisualsTab:AddRightGroupbox("Config")
+local VisRightBox = Tabs.VisualsTab:AddRightTabbox()
+local ConfigTab = VisRightBox:AddTab("Config")
 
-VisBox3:AddButton({Text = "💾 Save Config", Func = function()
-    local success = SaveConfig()
-    Library:Notify(success and "✅ Config Saved!" or "❌ Save Failed!")
-end, Tooltip = "Saves your current configuration"})
+ConfigTab:AddButton({Text = "Save Config", Func = function()
+    local folder = "MeowlHub"
+    if not isfolder(folder) then makefolder(folder) end
+    local cfg = {}
+    for k,v in pairs(Enabled) do cfg["Enabled_"..k] = v end
+    for k,v in pairs(Values) do cfg["Values_"..k] = v end
+    writefile(folder.."/config.json", game:GetService("HttpService"):JSONEncode(cfg))
+    Library:Notify("Config saved!")
+end, Tooltip = "Save your current settings"})
 
-local VisBox4 = Tabs.VisualsTab:AddRightGroupbox("Keybinds Info")
-VisBox4:AddLabel("V=Speed | N=Spin | M=Galaxy | X=Aimbot")
-VisBox4:AddLabel("Z=AutoLeft | C=AutoRight | Q=Nuke | F=Spam")
-VisBox4:AddLabel("RightCtrl = Toggle GUI")
+local KeybindsTab = VisRightBox:AddTab("Keybinds")
+
+KeybindsTab:AddLabel("V = Speed Boost")
+KeybindsTab:AddLabel("N = Spin Bot")
+KeybindsTab:AddLabel("M = Galaxy Mode")
+KeybindsTab:AddLabel("X = Bat Aimbot")
+KeybindsTab:AddLabel("Z = Auto Walk Left")
+KeybindsTab:AddLabel("C = Auto Walk Right")
+KeybindsTab:AddLabel("Q = Instant Nuke")
+KeybindsTab:AddLabel("F = AP Spam Selected")
+KeybindsTab:AddLabel("RightCtrl = Toggle GUI")
 
 -- ─── TAB 5: 👻 Booster ───────────────────────────────────────
-local BoostBox1 = Tabs.BoosterTab:AddLeftGroupbox("Semi Invisible")
+local BoostLeftBox = Tabs.BoosterTab:AddLeftTabbox()
+local SemiInvisTab = BoostLeftBox:AddTab("Semi Invisible")
 
-BoostBox1:AddToggle("SemiInvisible", {Text = "Semi Invisible (With Brainrot)", Default = Enabled.SemiInvisible}):OnChanged(function(v)
-    toggleSemiInvisible(v)
+SemiInvisTab:AddToggle("SemiInvisible", {Text = "Semi Invisible (With Brainrot)", Default = Enabled.SemiInvisible})
+Toggles.SemiInvisible:OnChanged(function(v)
+    Enabled.SemiInvisible = v
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Semi Invisible'")
 end)
 
-local BoostBox2 = Tabs.BoosterTab:AddLeftGroupbox("Speed Boost")
+local SpeedPotTab = BoostLeftBox:AddTab("Speed Boost")
 
-BoostBox2:AddToggle("SpeedBoostBooster", {Text = "Potion Speed Boost (37.6 WalkSpeed)", Default = Enabled.SpeedBoostBooster}):OnChanged(function(v)
+SpeedPotTab:AddToggle("SpeedBoostBooster", {Text = "Potion Speed Boost (37.6 WalkSpeed)", Default = Enabled.SpeedBoostBooster})
+Toggles.SpeedBoostBooster:OnChanged(function(v)
+    Enabled.SpeedBoostBooster = v
     toggleBoosterSpeedBoost(v)
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Potion Speed Boost'")
 end)
 
-local BoostBox3 = Tabs.BoosterTab:AddRightGroupbox("Carpet Teleport")
+local BoostRightBox = Tabs.BoosterTab:AddRightTabbox()
+local BoostCarpetTab = BoostRightBox:AddTab("Carpet TP")
 
-BoostBox3:AddButton({Text = "🏠 Base 1", Func = function()
-    carpetTeleportToBase(1)
-    Library:Notify("Teleported to Base 1")
-end})
+BoostCarpetTab:AddButton({Text = "Base 1", Func = function()
+    local c = Player.Character; if c and c:FindFirstChild("HumanoidRootPart") then c.HumanoidRootPart.CFrame = CFrame.new(BASE1_POS) end
+end, Tooltip = "Teleport to Base 1"})
 
-BoostBox3:AddButton({Text = "🏠 Base 2", Func = function()
-    carpetTeleportToBase(2)
-    Library:Notify("Teleported to Base 2")
-end})
+BoostCarpetTab:AddButton({Text = "Base 2", Func = function()
+    local c = Player.Character; if c and c:FindFirstChild("HumanoidRootPart") then c.HumanoidRootPart.CFrame = CFrame.new(BASE2_POS) end
+end, Tooltip = "Teleport to Base 2"})
 
--- ─── TAB 6: 🥊 Auto Duel ─────────────────────────────────────
-local DuelBox1 = Tabs.DuelsTab:AddLeftGroupbox("Auto Duel")
+-- ─── TAB 6: ⭐ Auto Duel ─────────────────────────────────────
+local DuelLeftBox = Tabs.DuelsTab:AddLeftTabbox()
+local DuelMainTab = DuelLeftBox:AddTab("Auto Duel")
 
-DuelBox1:AddLabel("Automatically routes through duel waypoints.")
-DuelBox1:AddLabel("Stop near base before starting!")
+DuelMainTab:AddLabel("Routes through duel waypoints automatically.")
+DuelMainTab:AddLabel("Stop near base before starting!")
+DuelMainTab:AddDivider()
 
-DuelBox1:AddButton({Text = "▶ Start Auto Duel", Func = function()
-    if duelMoving then Library:Notify("Already running!"); return end
-    startDuel()
-end, Tooltip = "Start the auto duel routine"})
+DuelMainTab:AddButton({Text = "Start Auto Duel", Func = function()
+    startAutoDuel()
+    Library:Notify("Auto Duel Started!")
+end, Tooltip = "Begin the auto duel waypoint routing"})
 
-DuelBox1:AddButton({Text = "⏹ Stop Auto Duel", Func = function()
-    stopDuel()
-end, Tooltip = "Stop the auto duel routine"})
+DuelMainTab:AddButton({Text = "Stop Auto Duel", Func = function()
+    stopAutoDuel()
+    Library:Notify("Auto Duel Stopped!")
+end, Tooltip = "Stop the auto duel routing"})
 
-local DuelBox2 = Tabs.DuelsTab:AddRightGroupbox("Duel Status")
+local DuelRightBox = Tabs.DuelsTab:AddRightTabbox()
+local DuelStatusTab = DuelRightBox:AddTab("Duel Status")
 
-DuelBox2:AddLabel("Status updates shown in notifications.")
-DuelBox2:AddLabel("When prompted, grab pet manually.")
-DuelBox2:AddLabel("Speed is handled automatically.")
+DuelStatusTab:AddLabel("Status updates in notifications.")
+DuelStatusTab:AddLabel("When prompted, grab pet manually.")
+DuelStatusTab:AddLabel("Speed is handled automatically.")
 
--- ─── TAB 7: 📍 Semi TP ───────────────────────────────────────
-local SemiTPBox1 = Tabs.SemiTPTab:AddLeftGroupbox("Semi TP Settings")
+-- ─── TAB 7: 🏠 Semi TP ───────────────────────────────────────
+local SemiTPLeftBox = Tabs.SemiTPTab:AddLeftTabbox()
+local SemiTPMainTab = SemiTPLeftBox:AddTab("Settings")
 
-SemiTPBox1:AddToggle("SemiTPToggle", {Text = "Semi TP (Auto Carpet)", Default = Enabled.SemiTPEnabled}):OnChanged(function(v)
+SemiTPMainTab:AddToggle("SemiTPToggle", {Text = "Semi TP (Auto Carpet)", Default = Enabled.SemiTPEnabled})
+Toggles.SemiTPToggle:OnChanged(function(v)
     Enabled.SemiTPEnabled = v
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Semi TP'")
 end)
 
-SemiTPBox1:AddToggle("AutoPotionToggle", {Text = "Auto Giant Potion", Default = Enabled.AutoPotion}):OnChanged(function(v)
+SemiTPMainTab:AddToggle("AutoPotionToggle", {Text = "Auto Giant Potion", Default = Enabled.AutoPotion})
+Toggles.AutoPotionToggle:OnChanged(function(v)
     Enabled.AutoPotion = v
-    Library:Notify((v and "Enabled" or "Disabled") .. " 'Auto Potion'")
+    Library:Notify((v and "Enabled" or "Disabled") .. " 'Auto Giant Potion'")
 end)
 
-SemiTPBox1:AddToggle("SpeedAfterStealToggle", {Text = "Speed After Steal", Default = Enabled.SpeedAfterSteal}):OnChanged(function(v)
+SemiTPMainTab:AddToggle("SpeedAfterStealToggle", {Text = "Speed After Steal", Default = Enabled.SpeedAfterSteal})
+Toggles.SpeedAfterStealToggle:OnChanged(function(v)
     Enabled.SpeedAfterSteal = v
-    if not v and semiTPSpeedConnection then semiTPSpeedConnection:Disconnect(); semiTPSpeedConnection = nil end
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Speed After Steal'")
 end)
 
-SemiTPBox1:AddSlider("SemiTPSpeed", {Text = "Speed After Steal", Default = Values.SemiTPSpeedBoost, Min = 10, Max = 50, Rounding = 0, Compact = false}):OnChanged(function(v)
+SemiTPMainTab:AddSlider("SemiTPSpeed", {Text = "Speed After Steal", Default = Values.SemiTPSpeedBoost, Min = 10, Max = 50, Rounding = 0, Compact = false}):OnChanged(function(v)
     Values.SemiTPSpeedBoost = v
     Library:Notify("Semi TP Speed Set To " .. v)
 end)
 
-local SemiTPBox2 = Tabs.SemiTPTab:AddRightGroupbox("Manual Teleport")
+local SemiTPRightBox = Tabs.SemiTPTab:AddRightTabbox()
+local ManualTPTab = SemiTPRightBox:AddTab("Manual TP")
 
-SemiTPBox2:AddButton({Text = "🌀 TP To Spot 1", Func = function()
-    semiTPExecute(semiTPSpot1Sequence)
-    Library:Notify("Teleported to Spot 1")
-end})
+ManualTPTab:AddButton({Text = "TP To Spot 1", Func = function()
+    local c = Player.Character; if c and c:FindFirstChild("HumanoidRootPart") then c.HumanoidRootPart.CFrame = CFrame.new(SEMI_TP_SPOT1) end
+end, Tooltip = "Teleport to saved spot 1"})
 
-SemiTPBox2:AddButton({Text = "🌀 TP To Spot 2", Func = function()
-    semiTPExecute(semiTPSpot2Sequence)
-    Library:Notify("Teleported to Spot 2")
-end})
+ManualTPTab:AddButton({Text = "TP To Spot 2", Func = function()
+    local c = Player.Character; if c and c:FindFirstChild("HumanoidRootPart") then c.HumanoidRootPart.CFrame = CFrame.new(SEMI_TP_SPOT2) end
+end, Tooltip = "Teleport to saved spot 2"})
 
-SemiTPBox2:AddDivider()
-SemiTPBox2:AddLabel("💬 AP Spam Nearest")
+ManualTPTab:AddDivider()
 
-SemiTPBox2:AddButton({Text = "💬 Spam AP Nearest", Func = function()
+ManualTPTab:AddButton({Text = "Spam AP Nearest", Func = function()
     spamAPNearest()
-end, Tooltip = "Spam admin commands on nearest player"})
+end, Tooltip = "Spam AP commands on the nearest player"})
 
--- ─── TAB 8: 💬 AP Spam ───────────────────────────────────────
-local SpamBox1 = Tabs.SpamTab:AddLeftGroupbox("AP Spam")
+-- ─── TAB 8: 🛡 AP Spam ───────────────────────────────────────
+local SpamLeftBox = Tabs.SpamTab:AddLeftTabbox()
+local APSpamTab = SpamLeftBox:AddTab("AP Spam")
 
-SpamBox1:AddLabel("Select targets below, then press Spam.")
+APSpamTab:AddLabel("Select targets below, then press Spam.")
+APSpamTab:AddDivider()
 
-SpamBox1:AddButton({Text = "🎯 Spam Selected [F]", Func = function()
+APSpamTab:AddButton({Text = "Spam Selected [F]", Func = function()
     spamSelected()
-end, Tooltip = "Spam admin commands on selected players"})
+end, Tooltip = "Spam AP commands on selected players"})
 
-SpamBox1:AddButton({Text = "💬 Spam Nearest", Func = function()
-    local n = getNearestPlayer()
-    if n then spamSendCommands(n.Name); Library:Notify("Spammed " .. n.Name)
-    else Library:Notify("❌ No players nearby!") end
-end})
+APSpamTab:AddButton({Text = "Spam Nearest", Func = function()
+    spamAPNearest()
+end, Tooltip = "Spam AP commands on the nearest player"})
 
-local SpamBox2 = Tabs.SpamTab:AddRightGroupbox("Auto Defense")
+local TargetListTab = SpamLeftBox:AddTab("Target List")
 
-SpamBox2:AddToggle("AutoDefenseToggle", {Text = "Auto Defense", Default = Enabled.AutoDefenseEnabled}):OnChanged(function(v)
-    Enabled.AutoDefenseEnabled = v
-    Library:Notify((v and "Enabled" or "Disabled") .. " 'Auto Defense'")
-end)
+TargetListTab:AddLabel("Select players to spam:")
+TargetListTab:AddDivider()
 
-SpamBox2:AddSlider("DefenseCooldown", {Text = "Defense Cooldown (s)", Default = Values.DefenseCooldown, Min = 1, Max = 10, Rounding = 0, Compact = false}):OnChanged(function(v)
-    Values.DefenseCooldown = v
-    Library:Notify("Defense Cooldown Set To " .. v .. "s")
-end)
-
-SpamBox2:AddLabel("Auto Defense detects steal alerts")
-SpamBox2:AddLabel("and auto-spams the nearest stealer.")
-
-local SpamBox3 = Tabs.SpamTab:AddLeftGroupbox("Target List")
-SpamBox3:AddLabel("Use 'Spam Selected [F]' after selecting.")
-
--- Populate target list buttons dynamically
 local function buildTargetList()
     for _, plr in ipairs(Players:GetPlayers()) do
         if plr ~= Player then
-            SpamBox3:AddButton({Text = (selectedSet[plr] and "✅ " or "☐ ") .. plr.DisplayName, Func = function()
+            TargetListTab:AddButton({Text = (selectedSet[plr] and "[x] " or "[ ] ") .. plr.DisplayName, Func = function()
                 if selectedSet[plr] then
                     selectedSet[plr] = nil
-                    for i, p in ipairs(selectedPlayers) do
-                        if p == plr then table.remove(selectedPlayers, i); break end
+                    for i = #selectedPlayers, 1, -1 do
+                        if selectedPlayers[i] == plr then table.remove(selectedPlayers, i) end
                     end
-                    Library:Notify("Deselected " .. plr.DisplayName)
                 else
                     selectedSet[plr] = true
                     table.insert(selectedPlayers, plr)
-                    Library:Notify("Selected " .. plr.DisplayName)
                 end
+                Library:Notify((selectedSet[plr] and "Added" or "Removed") .. ": " .. plr.DisplayName)
             end})
         end
     end
@@ -2230,6 +2259,24 @@ Players.PlayerRemoving:Connect(function(plr)
     end
 end)
 
+local SpamRightBox = Tabs.SpamTab:AddRightTabbox()
+local AutoDefenseTab = SpamRightBox:AddTab("Auto Defense")
+
+AutoDefenseTab:AddToggle("AutoDefenseToggle", {Text = "Auto Defense", Default = Enabled.AutoDefenseEnabled})
+Toggles.AutoDefenseToggle:OnChanged(function(v)
+    Enabled.AutoDefenseEnabled = v
+    Library:Notify((v and "Enabled" or "Disabled") .. " 'Auto Defense'")
+end)
+
+AutoDefenseTab:AddSlider("DefenseCooldown", {Text = "Defense Cooldown (s)", Default = Values.DefenseCooldown, Min = 1, Max = 10, Rounding = 0, Compact = false}):OnChanged(function(v)
+    Values.DefenseCooldown = v
+    Library:Notify("Defense Cooldown Set To " .. v .. "s")
+end)
+
+AutoDefenseTab:AddDivider()
+AutoDefenseTab:AddLabel("Detects steal alerts and")
+AutoDefenseTab:AddLabel("auto-spams the nearest stealer.")
+
 -- F keybind for spam
 UserInputService.InputBegan:Connect(function(input, gpe)
     if gpe then return end
@@ -2239,15 +2286,19 @@ end)
 -- ─── TAB 9: ⚙ UI Settings ────────────────────────────────────
 local MenuGroup = Tabs.UISettings:AddLeftGroupbox("Menu", "wrench")
 
-MenuGroup:AddToggle("custom_cursor", {Text = "Custom Cursor", Default = true}):OnChanged(function(v)
+MenuGroup:AddToggle("custom_cursor", {Text = "Custom Cursor", Default = true, Tooltip = "Enables the custom cursor"}):OnChanged(function(v)
     Library.ShowCustomCursor = v
     Library:Notify((v and "Enabled" or "Disabled") .. " 'Custom Cursor'")
 end)
 
-MenuGroup:AddDropdown("DPIDropdown", {Text = "DPI Scale", Default = "100%", Values = {"50%","75%","100%","125%","150%"}}):OnChanged(function(v)
+MenuGroup:AddDropdown("notif_side", {Values = {"Left","Right"}, Default = "Right", Text = "Notification Side", Tooltip = "Which side notifications appear on"}):OnChanged(function(v)
+    Library:SetNotifySide(v)
+    Library:Notify("'" .. v .. "' Selected!")
+end)
+
+MenuGroup:AddDropdown("DPIDropdown", {Text = "DPI Scale", Default = "100%", Values = {"50%","75%","100%","125%","150%","175%","200%"}, Tooltip = "Adjust UI scale"}):OnChanged(function(v)
     local val = v:gsub("%%", "")
-    local DPI = tonumber(val)
-    Library:SetDPIScale(DPI)
+    Library:SetDPIScale(tonumber(val))
     Library:Notify("DPI Scale Set To " .. v)
 end)
 
@@ -2260,11 +2311,13 @@ end, Tooltip = "Completely unloads the script"})
 ThemeManager:SetLibrary(Library)
 SaveManager:SetLibrary(Library)
 SaveManager:IgnoreThemeSettings()
-SaveManager:SetIgnoreIndexes({'MenuKeybind'})
-ThemeManager:SetFolder('MeowlHub')
-SaveManager:SetFolder('MeowlHub/configs')
+SaveManager:SetIgnoreIndexes({"MenuKeybind"})
+ThemeManager:SetFolder("MeowlHub")
+SaveManager:SetFolder("MeowlHub/configs")
 SaveManager:BuildConfigSection(Tabs.UISettings)
 ThemeManager:ApplyToTab(Tabs.UISettings)
+
+
 
 -- ============================================================
 -- KEYBIND INPUT HANDLING
